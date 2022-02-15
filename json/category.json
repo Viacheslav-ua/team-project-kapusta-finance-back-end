@@ -1,0 +1,67 @@
+[
+  {
+    "categoryName": "Транспорт",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Продукты",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Здоровье",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Алкоголь",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Развлечения",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Всё для дома",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Техника",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Коммуналка, связь",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Спорт, хобби",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Образование",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Прочее",
+    "isProfit": false
+  },
+  {
+    "categoryName": "Зарплата",
+    "isProfit": true
+  },
+  {
+    "categoryName": "Пенсия",
+    "isProfit": true
+  },
+  {
+    "categoryName": "Лотарея",
+    "isProfit": true
+  },
+  {
+    "categoryName": "Ограбление банка",
+    "isProfit": true
+  },
+  {
+    "categoryName": "Подарок",
+    "isProfit": true
+  }
+]   
+

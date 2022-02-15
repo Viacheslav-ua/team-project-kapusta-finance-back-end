@@ -1,0 +1,678 @@
+{
+  "openapi": "3.0.0",
+  "info":{
+  "title": "API team-project-kapusta-finance-back-end",
+  "description": "Description of the server",
+  "version": "1.0.0",
+  "license": {
+    "name": "MIT",
+    "url": "https://opensource.org/licenses/mit"
+    }
+  },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "servers": [
+    {
+      "url": "http://localhost:3001/api",
+      "description": "development"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "Banking",
+      "description": "Job for finance endpoints"
+    },
+    {
+      "name": "Statistic",
+      "description": "Statistical functional"
+    }
+  ],
+
+  "paths": {
+    "/auth/registration": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Регистрация пользователя",
+        "parameters": [],
+        "requestBody": {
+          "description": "Registration's object",
+          "required": true,
+          "content": {
+            "application/json": {
+               "schema": {
+                 "$ref": "#/components/schemas/RegistrationRequest"
+               }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+             }
+            }
+          },
+          "400": {
+            "description": "Bed request",
+            "content": {}
+          },
+          "409": {
+            "description": "Provided email already exists",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Вход пользователя (login)",
+        "parameters": []
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Выход пользователя (logout)",
+        "parameters": [],
+        "security": [{"Bearer": []}]
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Получение нового токена при окончании срока действия текущего"
+      }
+    },
+    "/auth/google": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Редирект запроса на Google для логинизации"
+      }
+    },
+
+    "/banking/reset-balance": {
+      "patch": {
+        "tags": ["Banking"],
+        "summary": "Устанавливает значение баланса",
+        "parameters": [],
+        "security": [{"Bearer": []}],
+        "requestBody": {
+          "description": "balance object",
+          "required": true,
+          "content": {
+            "application/json": {
+               "schema": {
+                "$ref": "#/components/schemas/ResetBalanceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetBalanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bed request",
+            "content": {}
+          }
+        }  
+      }
+    },
+
+    "/banking/add-transaction": {
+      "post": {
+        "tags": ["Banking"],
+        "summary": "Добавляет новую транзакцию",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "reception",
+            "type": "string",
+            "description": "Тип возвращаемых данных('profit'-доходы, 'costs'-расходы, 'all'-все)"
+          }
+        ],
+        "security": [{"Bearer": []}],
+        "requestBody": {
+          "description": "transaction object",
+          "required": true,
+          "content": {
+            "application/json": {
+               "schema": {
+                "$ref": "#/components/schemas/AddTransactionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bed request",
+            "content": {}
+          }
+        }  
+      }
+    },
+    
+    "/banking/get-category": {
+      "get": {
+        "tags": ["Banking"],
+        "summary": "Возвращает список категорий",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "isProfit",
+            "type": "boolean",
+            "description": "Тип категории (Доход - true, Расход - false, Все - без параметра)"
+          }
+        ],
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bed request",
+            "content": {}
+          }
+        }
+      }  
+    },
+    "/banking/get-transactions": {
+      "get": {
+        "tags": ["Banking"],
+        "summary": "Возвращает список транзакций и баланс",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "reception",
+            "required": "true",
+            "type": "string",
+            "description": "Тип возвращаемых данных('profit'-доходы, 'costs'-расходы, 'all'-все)"
+          }
+        ],
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bed request",
+            "content": {}
+          }
+        }  
+      }
+    },
+
+    "/banking/remove-transaction/:id": {
+      "delete": {
+        "tags": ["Banking"],
+        "summary": "Удаляет транзакцию и возвращает список транзакций",
+        "security": [{"Bearer": []}],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": "true",
+            "type": "string",
+            "description": "ID удаляемой транзакции"
+          },
+          {
+            "in": "query",
+            "name": "reception",
+            "type": "string",
+            "description": "Тип возвращаемых данных('profit'-доходы, 'costs'-расходы, 'all'-все)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bed request",
+            "content": {}
+          }
+        }
+      }
+    },
+
+    "/statistic/summary": {
+      "get": {
+        "tags": ["Statistic"],
+        "summary": "Возвращает объект - сводку по месяцам",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "countMonths",
+            "type": "number",
+            "description": "Устанавливается количество месяцев сводки"
+          }
+        ],
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryResponse"
+                }
+              }
+            }
+          }
+        } 
+      } 
+    },
+    "/statistic/category-grouping/profit/:date": {
+      "get": {
+        "tags": ["Statistic"],
+        "summary": "Возвращает объект - сводку доходов за месяц сгруппированую по категориям",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": "true",
+            "type": "string",
+            "description": "Строковое значение даты указывающее на отчетный месяц ('2021-09-01')"
+          }
+        ],
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryGroupResponse"
+                }
+              }
+            }
+          }
+        } 
+      }
+    },
+    "/statistic/category-grouping/costs/:date": {
+      "get": {
+        "tags": ["Statistic"],
+        "summary": "Возвращает объект - сводку расходов за месяц сгруппированую по категориям",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": "true",
+            "type": "string",
+            "description": "Строковое значение даты указывающее на отчетный месяц ('2021-09-01')"
+          }
+        ],
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryGroupResponse"
+                }
+              }
+            }
+          }
+        } 
+      }
+    },
+    "/statistic/items-grouping/:categoryId": {
+      "get": {
+        "tags": ["Statistic"],
+        "summary": "Возвращает масив - сводку типов трансакций по одной категории",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": "true",
+            "type": "string",
+            "description": "ID категории по которой проводится групировка данных"
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "type": "string",
+            "description": "Строковое значение даты указывающее на отчетный месяц ('2021-09-01')"
+          }
+        ],
+        "security": [{"Bearer": []}],
+        "responses": {
+          "200": {
+            "description": "Ok operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemsGroupResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+  },
+
+  "components": {
+    "schemas": {
+      "RegistrationRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "length": {
+              "min": "3",
+              "max": "24"
+            },
+            "example": "kujg3645HDS"
+          }
+        }
+      },
+            
+      "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User's id",
+                "example": "61ffe081b8d104fd7e02d4ec"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              }
+            }
+          }
+        }
+      },
+      "ResetBalanceRequest": {
+        "type": "object",
+        "required": ["balance"],
+        "properties": {
+          "balance": {
+            "type": "number",
+            "description": "Новая сумма баланса",
+            "example": 2340.65
+          }
+        }
+      },
+      
+      "ResetBalanceResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User's id",
+            "example": "61ffe081b8d104fd7e02d4ec"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Новая сумма баланса",
+            "example": 2340.65
+          }
+        }
+      },
+
+      "AddTransactionRequest": {
+        "type": "object",
+        "required": ["categoryId"],
+        "properties": {
+          "categoryId": {
+            "type": "string",
+            "description": "Id категории",
+            "example": "6201097323254cceb91811ee"
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Наименование категории",
+            "example": "Продукты"
+          },
+          "dateTransaction": {
+            "type": "date",
+            "description": "Дата транзакции",
+            "example": "2022-10-02T21:00:00.000Z"
+          },
+          "description": {
+            "type": "string",
+            "description": "Наименование продукта или статьи транзакции",
+            "example": "Сало"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Сумма транзакции",
+            "example": 234.65
+          },
+          "isProfit": {
+            "type": "boolean",
+            "description": "Тип транзакции (Доход - true, Расход - false)",
+            "example": "false"
+          }
+        }
+      },
+      "TransactionsResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Баланс",
+            "example": 20366.50
+          },
+          "data": {
+            "type": "Массив объектов (транзакций)",
+            "array": [
+              {
+                "_id": {
+                  "type": "string",
+                  "description": "Id транзакции",
+                  "example": "6202a6cad8863ac0a2e866b9"
+                },
+                "userId": {
+                  "type": "string",
+                  "description": "Id пользователя",
+                  "example": "62016bcf8255e9a191ea95dd"
+                },
+                "categoryId": {
+                  "type": "string",
+                  "description": "Id категории",
+                  "example": "6201097323254cceb91811ee"
+                },
+                "categoryName": {
+                  "type": "string",
+                  "description": "Наименование категории",
+                  "example": "Продукты"
+                },
+                "dateTransaction": {
+                  "type": "date",
+                  "description": "Дата транзакции",
+                  "example": "2022-10-02T21:00:00.000Z"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Наименование продукта или статьи транзакции",
+                  "example": "Сало"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Сумма транзакции",
+                  "example": 234.65
+                },
+                "isProfit": {
+                  "type": "boolean",
+                  "description": "Тип транзакции (Доход - true, Расход - false)",
+                  "example": "false"
+                }
+              }
+            ]
+            
+          }
+        }
+      },
+      
+      "CategoryResponse": {
+        "type": "object",
+        "properties": {
+         "_id": {
+            "type": "string",
+            "description": "ID категории",
+            "example": "6201097323254cceb91811ee"
+         },
+          "categoryName": {
+            "type": "string",
+           "description": "Наименование категории",
+           "example": "Продукты"
+          },
+          "isProfit": {
+            "type": "boolean",
+            "description": "Тип категории (Доход - true, Расход - false)",
+            "example": false 
+          }
+        }
+      },
+      "SummaryResponse": {
+        "type": "Массив объектов",
+        "example": [
+          {
+            "id": 6,
+            "startDate": "2021-09-01",
+            "endDate": "2021-09-30",
+            "description": "СЕНТЯБРЬ 2021",
+            "profit": {
+                "_id": true,
+                "totalAmount": 55234.56,
+                "count": 4
+            },
+            "costs": {
+                "_id": false,
+                "totalAmount": 12357,
+                "count": 56
+            }
+        }
+        ]
+      },
+      "CategoryGroupResponse": {
+        "type": "Массив объектов",
+        "example": [
+          {
+            "_id": {
+                "categoryId": "6203a88a22bff1ae23f5c6ad",
+                "categoryName": "Зарплата",
+                "startDate": "2021-11-01T00:00:00.000Z"
+            },
+            "totalAmount": 36000,
+            "count": 2
+        }
+        ]
+      },
+      "ItemsGroupResponse": {
+        "type": "Массив объектов",
+        "example": [
+            {
+                "_id": "Свинина",
+                "totalAmount": 3790,
+                "count": 5
+            },
+            {
+                "_id": "Говядина",
+                "totalAmount": 2480,
+                "count": 4
+            },
+            {
+                "_id": "Курица",
+                "totalAmount": 2410,
+                "count": 10
+            },
+            {
+                "_id": "Овощи",
+                "totalAmount": 1060,
+                "count": 4
+            },
+            {
+                "_id": "Рыба",
+                "totalAmount": 960,
+                "count": 4
+            }
+        ]
+      }
+      
+    },
+
+
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
