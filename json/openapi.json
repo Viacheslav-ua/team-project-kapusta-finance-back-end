@@ -15,6 +15,10 @@
     {
       "url": "http://localhost:3001/api",
       "description": "development"
+    },
+    {
+      "url": "https://kapusta-finance.herokuapp.com/api",
+      "description": "production"
     }
   ],
   "tags": [
