@@ -51,16 +51,16 @@ class TransactionService {
     let data
     switch (reception) {
      case 'all':
-        data = await TransactionModel.find({userId}).sort({dateTransaction: -1 })
+        data = await TransactionModel.find({userId}).sort({dateTransaction: -1, createdAt: -1 })
         break
      case 'profit':
-        data = await TransactionModel.find({userId, isProfit: true}).sort({dateTransaction: -1 })  
+        data = await TransactionModel.find({userId, isProfit: true}).sort({dateTransaction: -1, createdAt: -1})  
         break
      case 'costs':
-        data = await TransactionModel.find({userId, isProfit: false}).sort({dateTransaction: -1 })
+        data = await TransactionModel.find({userId, isProfit: false}).sort({dateTransaction: -1, createdAt: -1})
         break
       default:
-        data = await TransactionModel.find({userId, isProfit}).sort({dateTransaction: -1 })
+        data = await TransactionModel.find({userId}).sort({dateTransaction: -1, createdAt: -1})
     }
     const user = await UserModel.findById(userId)
     return { total: user.balance, data}
