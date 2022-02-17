@@ -70,7 +70,7 @@ class UserService {
     const payload = {id: candidate._id, email: candidate.email}
     const tokens = tokenService.generateTokens(payload)
     await tokenService.saveToken(candidate._id, tokens.refreshToken)
-    return tokens
+    return { tokens, payload } 
   }
 
   async setBalance(userId, balance) {

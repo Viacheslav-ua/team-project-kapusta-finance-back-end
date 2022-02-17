@@ -92,11 +92,15 @@ class UserController {
       }
     })
 
-    const tokens = await userService.googleLoginTokens(userData.data.email)
+    const result = await userService.googleLoginTokens(userData.data.email)
+    const { tokens, payload } = result
     res.cookie('refreshToken', tokens.refreshToken, {maxAge: 2592000000, httpOnly: true})
 
+    
+    const strParams = queryString.stringify({ ...tokens, ...payload })
+
     return res.redirect(
-      `${process.env.CLIENT_URL}/google-redirect`
+      `${process.env.CLIENT_URL}/google-redirect?${strParams}`
     )
       
   }
