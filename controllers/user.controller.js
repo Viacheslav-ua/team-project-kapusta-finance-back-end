@@ -97,7 +97,7 @@ class UserController {
     res.cookie('refreshToken', tokens.refreshToken, {maxAge: 2592000000, httpOnly: true})
 
     
-    const strParams = queryString.stringify({ ...tokens, ...payload })
+    const strParams = queryString.stringify({accessToken: tokens.accessToken, ...payload })
 
     return res.redirect(
       `${process.env.CLIENT_URL}/google-redirect?${strParams}`
